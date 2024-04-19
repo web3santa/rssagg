@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +11,6 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello World")
 
 	godotenv.Load()
 
@@ -24,17 +22,7 @@ func main() {
 
 	router := chi.NewRouter()
 
-	srv := &http.Server{
-		Handler: router,
-		Addr:    ":" + portString,
-	}
-
 	log.Printf("Server starting on port %v", portString)
-
-	err := srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -44,5 +32,21 @@ func main() {
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
+
+	v1Router := chi.NewRouter()
+
+	v1Router.HandleFunc("/healthz", handleReadiness)
+
+	router.Mount("/v1", v1Router)
+
+	srv := &http.Server{
+		Handler: router,
+		Addr:    ":" + portString,
+	}
+
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
