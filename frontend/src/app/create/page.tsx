@@ -11,7 +11,8 @@ import { SubmitHandler } from "react-hook-form";
 const Post: React.FC = () => {
   const router = useRouter();
 
-  const API_URL = "http://localhost:8000/v1/users" || null;
+  const API_URL =
+    "http://localhost:8000/v1/users" || process.env.NEXT_PUBLIC_API_URL;
 
   const handleCreatePost: SubmitHandler<FormInputPost> = (data) => {
     mutate(data);

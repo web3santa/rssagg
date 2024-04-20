@@ -17,6 +17,8 @@ type apiConfig struct {
 }
 
 func main() {
+	dbURL := os.Getenv("DATABASE_URL")
+	log.Println("DATABASE_URL:", dbURL)
 
 	conn, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {

@@ -4,4 +4,18 @@
 
 # Frontend Nextjs
 
+##
+
+- npx create-next-app@latest --no-git
+
+# /\*_ @type {import('next').NextConfig} _/
+
+# const nextConfig = {
+
+# output: "standalone",
+
+# };
+
 # Backend goalng
+
+docker build -t local_image_name:tag .
