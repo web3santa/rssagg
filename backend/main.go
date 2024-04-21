@@ -8,8 +8,9 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"github.com/web3santa/rssagg/database"
+	"github.com/web3santa/rssagg/internal/database"
 )
 
 type apiConfig struct {
@@ -17,6 +18,11 @@ type apiConfig struct {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	dbURL := os.Getenv("DATABASE_URL")
 	log.Println("DATABASE_URL:", dbURL)
 
@@ -47,6 +53,9 @@ func main() {
 	v1Router.Get("/healthz", handleReadiness)
 	v1Router.Get("/err", handleErr)
 	v1Router.Post("/users", apiCfg.handlerCreateUser)
+	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handleGetUser))
+
+	v1Router.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
 
 	router.Mount("/v1", v1Router)
 

@@ -1,9 +1,11 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "sql/queries/uesrs.sql"
-    schema: "sql/schema/001_users.sql"
+    queries:
+      - "sql/queries"
+    schema:
+      - "sql/schema"
     gen:
       go:
         package: "database"
-        out: "database"
+        out: "internal/database"

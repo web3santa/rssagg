@@ -10,9 +10,10 @@ import (
 	"github.com/web3santa/rssagg/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
+		URL  string `json:"url"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -22,22 +23,24 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error parsing JSON..%v:", err))
 		return
 	}
-	user, err := apiCfg.DB.CreatedUser(r.Context(), database.CreatedUserParams{
+	feed, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		Name:      params.Name,
+		Url:       params.URL,
+		UserID:    user.ID,
 	})
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Couldnt create user::%v", err))
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, databaseUserToUser(user))
+	respondWithJSON(w, http.StatusCreated, databaseFeedToFeed(feed))
 }
 
-func (apiCfg *apiConfig) handleGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
+func (apiCfg *apiConfig) handleGetFeed(w http.ResponseWriter, r *http.Request, feed database.Feed) {
 
-	respondWithJSON(w, http.StatusCreated, databaseUserToUser(user))
+	respondWithJSON(w, http.StatusCreated, databaseFeedToFeed(feed))
 
 }
