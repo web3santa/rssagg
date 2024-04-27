@@ -19,3 +19,9 @@
 # Backend goalng
 
 docker build -t local_image_name:tag .
+
+./sql/schema
+
+- goose postgres dbURL up
+
+after Model changed - sqlc generat
